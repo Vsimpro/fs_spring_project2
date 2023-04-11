@@ -3,6 +3,9 @@ logs
 *.log
 npm-debug.log*
 
+# Tests
+*.py
+
 # Dependency directories
 node_modules/
 jspm_packages/
