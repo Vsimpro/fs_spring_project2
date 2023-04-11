@@ -6,11 +6,14 @@ Fullstack course, Spring 2023.
 f"{appIdea} that does {appDescription}"
 ```
 
+
 How to run:
 Inside fs_spring_project2 folder
-
+```sh
 npm install
 node ./index.js
+```
+
 Links:
 
 Render: NaN
