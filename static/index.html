@@ -1,0 +1,317 @@
+<!DOCTYPE HTML>
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+    <div class="window">
+        <header>
+            <h1> New Collection </h1>
+            
+        </header>
+        
+        <div class="form">
+            <h2> Authentication: </h2>
+            <!-- Login text -->
+            <span class="login_text">
+                <p> Log in to make a comment. </p> 
+                <p class="small"> ps. if you have no account, 
+                    <span class="pseudolink" id="register">register</span> 
+                instead. </p>
+                <br>
+            </span>
+
+            <!-- Register text -->
+            <span class="register_text">
+                <p> Register a new account. </p> 
+                <p> we will only store your username & password, <br>
+                    in addition to the comments you make </p>
+                <br>
+            </span>
+            
+            <span class="auth_form">
+
+                <p> Username: <input name="username" placeholder="Username.." ></p>
+                <p> Password: <input name="password" placeholder="Password.." type="password"></p>
+                <br>
+                <button id="submit"> submit credentials </button>
+                <br>
+            </span>
+
+            <span class="comment_form">
+                <br>
+                <p> You're logged in as: <span class="whoami"> </span> </p> 
+                <p> Username: <input name="comment" placeholder="New comment.." ></p>
+                <br>
+                <button id="submit"> add comment </button>
+            </span>
+                    
+        </div>
+        <br>
+        <div class="canvas">
+            <h2 class="title"> Comments: </h2>
+            <div id="comment_list">
+
+            </div>
+        </div>
+    </div>
+</body>
+
+<!-- Single page design.-->
+<style>
+
+:root {
+    /* Catppuccin Colour- scheme */    
+  --black-color:    #11111b;
+  --grey-color:     #9399b2;
+  --dark-grey-color:#45475a;
+  --bg-color:       #1e1e2e;
+  --text-color:     #cdd6f4;
+  --rose-color:     #f5e0dc;
+  --mauve-color:    #cba6f7;
+  --red-color:      #f38ba8;
+  --peach-color:    #fab387;
+  --yellow-color:   #f9e2af;
+  --green-color:    #a6e3a1;
+  --sky-color:      #89dceb;
+  --blue-color:     #89b4fa;
+  --lavender-color: #b4befe;
+
+  /* Box Sizes. */    
+
+  --title-width: 983px;
+
+  --window-heigth: 800px;
+  --window-width:  1000px;
+  
+  --form-heigth: 377px
+  --form-width:  983px;
+
+  --comments-height: 8000px;
+  --comments-width:  983px;
+
+  --card-width: 290px;
+  --card-heigth: auto;
+}
+
+* {
+    user-select: none;
+}
+
+body {
+    overflow: hidden;
+    text-align: center;
+
+    font-family: monospace;
+
+    background-color: var(--bg-color);
+}
+
+h1 {
+    margin:  0;
+    padding: 0;
+
+    padding-left:  5%;
+    padding-right: -5%;
+
+    text-shadow: 4px 0px 4px var(--text-color);
+}
+
+h2 {
+    text-shadow: 1px 0px 6px var(--rose-color);
+}
+
+header {
+    width:  var(--title-width);
+    height: 30px;
+
+
+    text-align: left;
+
+    border-bottom: 4px solid var(--grey-color);
+
+    background-color: var(--peach-color);
+}
+
+p {
+    margin:  0;
+    padding: 0;
+    
+}
+
+
+.canvas {
+    user-select: all;
+
+    font-size: large;
+
+    margin: 0;
+
+    color: var(--bg-color);
+
+    width:  var(--comments-width);
+    height: auto;
+}
+
+.card {
+    float: left;
+
+    width: var(--card-width);
+    height: var(--card-heigth);
+
+    text-align: left;    
+
+    margin: 0;
+    padding: 0;
+
+    margin: 1%;
+
+    border-top:   1px solid var(--black-color);
+    border-right: 1px solid var(--black-color);
+
+    box-shadow: 3px 3px 1px var(--black-color);
+    
+}
+
+.form {
+    height: var(--form-width);
+    height: var(--form-heigth);
+
+    font-size: large;
+}
+
+.pseudolink {
+    text-decoration: underline;
+    font-weight: bolder;
+}
+
+.pseudolink:hover {
+    color: var(--sky-color);
+    background-color: var(--bg-color);
+
+}
+
+.title, .form {
+    margin: 0;
+
+    text-align: left;
+
+    padding-left: 5%;
+}
+
+.update {
+    width: var(--card-width);
+}
+
+.username {
+    position: relative;
+    font-style: italic;
+    font-size: xx-large;
+    font-weight: bolder;
+    
+
+    margin: 0;
+    margin-bottom: 2%;
+
+    padding: 0;
+    padding-left: 4%;
+    padding-bottom: 2%;
+
+    border-left: 1px solid var(--bg-color);
+    border-bottom: 1px solid var(--bg-color);    
+}
+
+.message {
+    text-align: left;
+
+    margin: 0;
+    padding: 2%;
+
+    border-left: 1px solid var(--black-color);
+
+    border-bottom: 1px solid var(--black-color);
+}
+
+.window {
+    overflow-y: scroll;
+    position: relative;
+
+    width:  var(--window-width);
+    height: var(--window-heigth);
+
+    margin: 0;
+    margin-top: 33px;
+    
+    display: inline-block;
+
+    color:            var(--black-color);
+
+    background-color: var(--text-color);
+
+    box-shadow: 15px 15px 0px var(--black-color);
+    
+    transform: rotate(0deg);
+    
+    /*
+    animation-name: rotate;
+    animation-duration: 1s;
+    animation-timing-function: ease-in-out;*/
+
+    border:  4px solid var(--grey-color);
+    border-bottom: 4px solid var(--dark-grey-color);
+    border-right:  4px solid var(--dark-grey-color);
+}
+
+@keyframes rotate{
+  from {
+    top:        var(--window-heigth);
+    margin-top: var(--window-heigth);
+    box-shadow: 0px 0px 0px var(--bg-color);
+    transform: rotate(-90deg); /* Specify the initial transformation */
+  }
+  to {
+    top: 0px;
+    margin-top: 33px;
+    box-shadow: 12px 12px 0px var(--black-color);
+    transform: scale(0deg); /* Specify the final transformation */
+  }
+}
+
+</style>
+
+<script>
+var cookie = {
+    username : null,
+    password : null,
+}
+
+function create_card(id, username, message) {
+    let owner = document.createElement("p");
+    let card  = document.createElement("div");
+    let content = document.createElement("p");
+    let update  = document.createElement("button");
+
+    card.id = id
+    card.className = "card"
+
+    update.className = "update"
+    update.innerText = "update content"
+    
+    owner.innerText = username;
+    owner.className = "username"
+
+    content.innerText = message;
+    content.className = "message"
+    
+    card.appendChild(owner)
+    card.appendChild(content)
+
+    if (username == cookie.username) {
+        card.appendChild(update)
+    }
+
+    
+
+    document.getElementById("comment_list").appendChild(card)
+
+}
+</script>
