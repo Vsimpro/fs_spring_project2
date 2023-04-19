@@ -69,7 +69,7 @@ async function modify_content(data, id) {
 
 async function delete_comment(id) {
     try {
-        DATABASE.delete(id)
+       await DATABASE.delete(id)
     } catch (error) {
         console.log("[!] Error")
         console.log(error)
@@ -199,7 +199,7 @@ app.post("/api/register", async function(request, response) {
         return 1;
     }
     
-    response.status(203).send("{success : true}")
+    response.status(201).send("{success : true}")
     return 1;
 });
 
@@ -210,6 +210,12 @@ app.post("/api/add/", function(request, response) {
     let cookies = request.cookies;
 
     console.log("[>] [api] POST '/api/add/'");
+    if ((data["message"].length > 250) || 
+        (data["message"] == undefined) || 
+        (data["message"] == "")) {
+            response.status(418).send("{success : false, error : \"no content\"}")
+            return 1;
+        }
 
     if (check_permission(cookies)) {
         
