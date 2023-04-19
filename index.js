@@ -1,24 +1,23 @@
 /* Imports */
-require("dotenv").config();
+const cors = require("cors");
 const express = require("express");
 const cookieParser = require('cookie-parser');
+require("dotenv").config();
+
+/* Modules */
+var Connection = require("./modules/mongo.js")
+var DATABASE = new Connection()
 
 /* Global Variables */
 const app = express();
+      app.use(cors( {origin: "*" }));
       app.use(express.json());
       app.use(cookieParser());
-      app.use(express.static(__dirname + "/templates/static"))
+      app.use(express.static(__dirname + "/static/"))
       
 
 let HOST = process.env.HOST
 let PORT = process.env.PORT
-
-// Until authentication is done, keep track of users here:
-var USERS = []
-
-// Until storing is done, keep track of comments here:
-var COMMENTS = []
-
 
 /* Functions */
 // check_permission : returns true if action is allowed, false if not.
@@ -38,57 +37,58 @@ function check_permission(token) {
 }
 
 // finds user token
-function find_user(token) {
-    for (let i = 0; i < USERS.length; i++) {
-        let user = USERS[ i ];
-        if ((user["username"] == token["username"]) 
-         && (user["password"] == token["password"])) {
-            
-            return user;
-        }
+async function find_user(token) {
+
+    let user = token["username"];
+    let passwd = token["password"]
+
+    let user_in_db = await DATABASE.fetch_users(user, passwd);
+
+    if (user_in_db == null) {
+        return null;
+    }
+
+    if (user_in_db["username"] == token["username"]) {
+        return user;
     }
 
     return null;
 }
 
-function modify_content(data, id) {
-    for (let i = 0; i < COMMENTS.length; i++) {
-        let temp = COMMENTS[i]
-        if (id == temp["id"]) {
-            COMMENTS[i] = {
-                "id" : id,
-                "message"  : data["message"],
-                "username" : temp["username"]
-            };
-            return true;
-        }
+async function modify_content(data, id) {
+    try {
+        await DATABASE.patch(data, id)
+    } catch (err) {
+        console.log("[!] Error")
+        console.log(err)
+        return false
     }
-    return false
+
+    return true
 }
 
-function delete_comment(id) {
-    for (let i = 0; i < COMMENTS.length; i++) {
-        let temp = COMMENTS[i]
-        if (id == temp["id"]) {
-            COMMENTS[i] = {
-                "id" : id,
-                "message"  : null,
-                "username" : null
-            };
-            return true;
-        }
+async function delete_comment(id) {
+    try {
+        DATABASE.delete(id)
+    } catch (error) {
+        console.log("[!] Error")
+        console.log(error)
+        return false
     }
-    return false
+    return true
 }
 
 // is_owner : check if user owns the resource 
-function is_owner(token, id) {
-    for (let i = 0; i < COMMENTS.length; i++) {
-        let temp = COMMENTS[i]
-        if ((token["username"] == temp["username"]) && (id == temp["id"])) {
+async function is_owner(token, id) {
+    let comments = await DATABASE.fetch_comments()
+
+    for (let i = 0; i < comments.length; i++) {
+        if ((comments[i]["id"] == id) && 
+            (comments[i]["username"] == token["username"])) {
             return true;
         }
     }
+
     return false
 }
 
@@ -98,20 +98,26 @@ app.listen(PORT, function() {
     console.log("[+] [Index] Server starting on http://" + HOST + ":" + PORT) 
 });
 
-app.get("/", function(request, response) {
-    console.log("[>] [Index] GET '/'");
-    response.send("200"); 
-    return 0; 
-});
-
-
 /* No Auth needed */
 // /api/getall : return all the comments. POST
-app.get("/api/getall", function(request, response){
+app.get("/api/getall", async function(request, response){
     console.log("[>] [api] GET '/api/getall/'");
     try {
-        response.send(JSON.stringify(COMMENTS))
+        //response.send(JSON.stringify(COMMENTS))
+        let comments = await DATABASE.fetch_comments() 
+
+        for (let i = 0; i < comments.length; i++) {
+            comments[i] = {
+                id : comments[i].id,
+                username : comments[i].username,
+                message : comments[i].message,
+            }
+        }
+        response.send(JSON.stringify( comments ))
+            
     } catch (error) {
+        console.log("[!] Error")
+        console.log(error)
         response.send("{success : false, error : 500}")
         return 1
     }
@@ -120,82 +126,82 @@ app.get("/api/getall", function(request, response){
 });
 
 // /api/:id : return comment with this id.
-app.get("/api/id/:id", function(request, response){
+app.get("/api/id/:id", async function(request, response){
     let id = request.params.id
     console.log(`[>] [api] GET '/api/${id}'`);
 
-    for (let i = 0; i < COMMENTS.length; i++) {
-        let temp = COMMENTS[i];
-        if (temp["id"] == id) {
-            response.send(JSON.stringify( temp ))
+    let comments = await DATABASE.fetch_comments();
+    for (let i = 0; i < comments.length; i++) {
+
+        if (comments[i]["id"] == id) {
+            response.send(JSON.stringify( {
+                id : comments[i].id,
+                username : comments[i].username,
+                message : comments[i].message,
+            }));
+
             return 0;
         }
     }
-    response.send("{}")
+
+    response.send("[{}]")
     return 1;
 });
 
+// TODO: Register
 
-// /api/:user : return all comments made by this user.
-app.get("/api/user/:user", function(request, response){
-    let user_comments = []
-    let user = request.params.user
-    
-    console.log(`[>] [api] GET '/api/${user}'`);
-
-    for (let i = 0; i < COMMENTS.length; i++) {
-        let temp = COMMENTS[i];
-        if (temp["username"] == user) {
-            user_comments.push(temp);
-        }
-    }
-    
-    response.send(JSON.stringify( user_comments ))
-    return 0;
-});
-
-
-// /api/login  : create access key. POST
-app.post("/api/login", function(request, response) {
+// /api/login 
+app.post("/api/login", async function(request, response) {
     console.log("[>] [api] POST '/api/login/'");
     let data = request.body
 
-    console.log(data)
     if ( (!data["username"]) || (!data["password"])) {
-        response.send("{success : false}")
+        response.status(401).send("{success : false}")
         return 1;
     }
 
-    USERS.push(data)
-    response.send("{success : true}")
-    return 0;
-});
+    let user = data["username"];
+    let passwd = data["password"]
 
-// /api/logout : delete access key. 
-app.post("/api/logoff", function(request, response) {
-    let data = request.body
-
-    console.log(data)
-    if ( (!data["username"]) || (!data["password"])) {
-        response.send("{success : false}")
-        return 1;
+    let user_in_db = await DATABASE.fetch_users(user, passwd);
+    
+    if ((user_in_db.username == user && user_in_db.password == passwd)) {
+        response.status(202).send("{success : true}")
+        return 0
     }
 
-    for (let i = 0; i < USERS.length; i++) {
-        let user = USERS[ i ];
-        if ((user["username"] == token["username"]) 
-         && (user["password"] == token["password"])) {
-            
-            USERS.splice(i, 1);
-            response.send("{success : true}")
-            return 0;
-        }
-    }
-
-    response.send("{success : false}")
+    response.status(401).send("{success : false}")
     return 1;
 });
 
+app.post("/api/register", async function(request, response) {
+    console.log("[>] [api] POST '/api/register/'");
+    let data = request.body
+    
+    if ( (!data["username"]) || (!data["password"])) {
+        response.status(418).send("{success : false}")
+        return 1;
+    }
+
+    let exists = await find_user(data)
+    if (exists) {
+        console.log("[>] [api] User already exists.");
+        response.status(401).send("{success : false}")
+        return 1;
+    }
+
+    await DATABASE.create_user(data["username"], data["password"])
+
+    let created = await find_user(data)
+    if (!created) {
+        console.log("[>] [api] problem creating a new user..");
+        response.status(418).send("{success : false}")
+        return 1;
+    }
+    
+    response.status(203).send("{success : true}")
+    return 1;
+});
 
 /* Auth Locked */
 // /api/add : add a new comment if auth key allows it. POST
@@ -206,68 +212,73 @@ app.post("/api/add/", function(request, response) {
     console.log("[>] [api] POST '/api/add/'");
 
     if (check_permission(cookies)) {
-        // TODO: Validation
-        COMMENTS.push({
-            "id" : COMMENTS.length,
-            "message" : data["message"],
-            "username" : cookies["username"]
+        
+        DATABASE.post({
+            "username" : cookies["username"],
+            "message"  : data["message"],
         });
 
-        response.send("{success : true}")
+        response.status(201).send("{success : true}")
         return 0;
     }
        
-    response.send("{success : false}")
+    response.status(401).send("{success : false}")
     return 1;
 });
 
 // /api/update/:id : update earlier made comments. POST
-app.post("/api/update/:id", function(request, response) {
+app.post("/api/update/:id", async function(request, response) {
     let data = request.body;
     let id = request.params.id;
     let cookies = request.cookies;
     
     console.log(`[>] [api] POST '/api/update/${id}'`);
 
-    if (!is_owner(cookies, id)) {
-        response.send("{success : false}")
+    let owner = await is_owner(cookies, id)
+    if (!owner) {
+        response.status(401).send("{success : false}")
         return 1;
     }
 
-    if (!modify_content(data, id)) {
-        response.send("{success : false}")
+    let status = await modify_content(data, id)
+    if (!status) {
+        response.status(401).send("{success : false}")
         return 1;
     }
 
-    response.send("{success : true}")
+    console.log(`[>] [api] Updated '${id}'`);
+    response.status(202).send("{success : true}")
     return 0;
 });
 
 // /api/delete/:id delete a comment made earlier. POST
-app.post("/api/delete/:id", function(request, response) {
+app.post("/api/delete/:id", async function(request, response) {
     let id = request.params.id
     let data = request.body
     let cookies = request.cookies;
 
     console.log(`[>] [api] POST '/api/delete/${id}'`);
 
-    if (!is_owner(cookies, id)) {
-        response.send("{success : false}")
+    let owner = await is_owner(cookies, id)
+    if (!owner) {
+        response.status(401).send("{success : false}")
         return 1;
     }
 
-    if (!delete_comment(id)) {
-        response.send("{success : false}")
+    let status = await delete_comment(id)
+    if (!status) {
+        response.status(401).send("{success : false}")
         return 1;
     }
     
-    response.send("{success : true}")
+    console.log(`[>] [api] Deleted id : '${id}'`);
+    response.status(202).send("{success : true}")
     return 0;
 });
 
 // Catch 404
 app.get("/*", function(request, response) {
-    console.log("[>] [Index] GET '/?'");
-    response.send("404"); 
+    console.log("[>] [Index] GET '/?', no page.");
+    response.status(404).send("404"); 
     return 0; 
 });
