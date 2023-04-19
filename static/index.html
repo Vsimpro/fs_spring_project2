@@ -89,6 +89,8 @@
   --comments-height: 8000px;
   --comments-width:  983px;
 
+  --button-width: 145px;
+
   --card-width: 290px;
   --card-heigth: auto;
 }
@@ -199,8 +201,8 @@ p {
     padding-left: 5%;
 }
 
-.update {
-    width: var(--card-width);
+.update, .delete_bttn {
+    width: var(--button-width);
 }
 
 .username {
@@ -281,7 +283,7 @@ p {
 
 <script>
 var cookie = {
-    username : null,
+    username : "Jack",
     password : null,
 }
 
@@ -290,12 +292,16 @@ function create_card(id, username, message) {
     let card  = document.createElement("div");
     let content = document.createElement("p");
     let update  = document.createElement("button");
+    let delete_button  = document.createElement("button");
 
     card.id = id
     card.className = "card"
 
     update.className = "update"
     update.innerText = "update content"
+
+    delete_button.className = "delete_bttn"
+    delete_button.innerText = "delete"
     
     owner.innerText = username;
     owner.className = "username"
@@ -308,6 +314,7 @@ function create_card(id, username, message) {
 
     if (username == cookie.username) {
         card.appendChild(update)
+        card.appendChild(delete_button)
     }
 
     document.getElementById("comment_list").appendChild(card)
@@ -368,6 +375,24 @@ function toggle_content(state_) {
     return 0;
 };
 
+function get_comments() {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', 'http://localhost:4321/api/getall');
+    xhr.onload = () => {
+        if (xhr.status === 200) {
+            const data = JSON.parse(xhr.responseText);
+            console.log(data);
+            for (let i = 0; i < data.length; i++) {
+                create_card(
+                    data[i]["id"], 
+                    data[i]["username"], 
+                    data[i]["message"]);
+            };
+        };
+    }
+    xhr.send();
+}
+
 document.getElementById("register").addEventListener("click", function (){
     console.log("Switch to register")
     toggle_content(2)
@@ -389,5 +414,8 @@ document.getElementById("submit_comment").addEventListener("click", function (){
     console.log("New comm")
 });
 
-toggle_content(1)
+window.onload = () => {
+    get_comments()
+    toggle_content(1)
+};
 </script>
