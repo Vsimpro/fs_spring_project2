@@ -33,7 +33,7 @@
                 <p> Username: <input name="username" placeholder="Username.." ></p>
                 <p> Password: <input name="password" placeholder="Password.." type="password"></p>
                 <br>
-                <button id="submit"> submit credentials </button>
+                <button id="submit_cred"> submit credentials </button>
                 <br>
             </span>
 
@@ -42,7 +42,7 @@
                 <p> You're logged in as: <span class="whoami"> </span> </p> 
                 <p> Username: <input name="comment" placeholder="New comment.." ></p>
                 <br>
-                <button id="submit"> add comment </button>
+                <button id="submit_comment"> add comment </button>
             </span>
                     
         </div>
@@ -169,7 +169,8 @@ p {
     border-right: 1px solid var(--black-color);
 
     box-shadow: 3px 3px 1px var(--black-color);
-    
+
+    background-color: var(--text-color);
 }
 
 .form {
@@ -245,7 +246,7 @@ p {
 
     color:            var(--black-color);
 
-    background-color: var(--text-color);
+    background-color: var(--rose-color);
 
     box-shadow: 15px 15px 0px var(--black-color);
     
@@ -309,9 +310,84 @@ function create_card(id, username, message) {
         card.appendChild(update)
     }
 
-    
-
     document.getElementById("comment_list").appendChild(card)
-
 }
+
+var state = 1;
+var login_ = true
+var auth_= true
+var comment_ = false
+var register_ = false
+
+// states [ 1 : log in, 2 : register, 3 : comment ]
+function toggle_content(state_) {
+    state = state_
+
+    let auth_form = document.getElementsByClassName("auth_form")[0]
+    let login_text = document.getElementsByClassName("login_text")[0]
+    let comment_form = document.getElementsByClassName("comment_form")[0]
+    let register_text = document.getElementsByClassName("register_text")[0]
+    
+    switch (state_) {
+        case 1:
+            auth_ = true;
+            login_ = true;
+            comment_ = false;
+            register_ = false;
+            break;
+
+        case 2:
+            auth_ = true;
+            login_ = false;
+            comment_ = false;
+            register_ = true;
+            break;
+
+        case 3:
+            auth_ = false;
+            login_ = false;
+            comment_ = true;
+            register_ = false;
+            break;
+
+        default: // Same as 1.
+            auth_ = true;
+            login_ = true;
+            comment_ = true;
+            register_ = true;
+            break;
+    } 
+
+
+    // Show if true, hide if false. I know it's not pretty. Its intuitive.
+    auth_form.hidden = !auth_
+    login_text.hidden = !login_ 
+    comment_form.hidden = !comment_
+    register_text.hidden = !register_
+    
+    return 0;
+};
+
+document.getElementById("register").addEventListener("click", function (){
+    console.log("Switch to register")
+    toggle_content(2)
+});
+
+document.getElementById("submit_cred").addEventListener("click", function (){
+    if (state == 1) {
+        console.log("Logging in.")
+    }
+
+    if (state == 2) {
+        console.log("Registration.")
+    }
+
+    toggle_content(3)
+});
+
+document.getElementById("submit_comment").addEventListener("click", function (){
+    console.log("New comm")
+});
+
+toggle_content(1)
 </script>
