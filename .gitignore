@@ -5,6 +5,8 @@ npm-debug.log*
 
 # Tests
 *.py
+register.py
+tests.py
 
 # Dependency directories
 node_modules/
