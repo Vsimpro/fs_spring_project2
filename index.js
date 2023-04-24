@@ -55,6 +55,23 @@ async function find_user(token) {
     return null;
 }
 
+// check if user exists.
+async function user_exists(token) {
+
+    let user = token["username"];
+    let user_in_db = await DATABASE.user_exists(user);
+
+    if (user_in_db == null) {
+        return false;
+    }
+
+    if (user_in_db["username"] == token["username"]) {
+        return true;
+    }
+
+    return false;
+}
+
 async function modify_content(data, id) {
     try {
         await DATABASE.patch(data, id)
@@ -183,8 +200,8 @@ app.post("/api/register", async function(request, response) {
         return 1;
     }
 
-    let exists = await find_user(data)
-    if (exists) {
+    let exists = await user_exists(data)
+    if (exists != null) {
         console.log("[>] [api] User already exists.");
         response.status(401).send("{success : false}")
         return 1;

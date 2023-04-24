@@ -88,6 +88,18 @@ class Connection {
         return user
     };
 
+    async user_exists(username_) {
+        if (username_ == null)  {
+            return null
+        }
+
+        var user = await User.findOne({
+            username : username_,
+        });
+
+        return user
+    };
+
     async fetch_comments() {
         var comments = await Comment.find({});
         
