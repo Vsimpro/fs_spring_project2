@@ -85,7 +85,7 @@ class Connection {
             password : password_
         });
 
-        return user
+        return user || {username : null, password : null}
     };
 
     async user_exists(username_) {

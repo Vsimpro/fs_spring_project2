@@ -16,8 +16,10 @@ function update_comment(id, message) {
     xhr.open("POST", url, true);
     xhr.withCredentials = true;
     xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onload = () => {
-        if (( xhr.status == 401 ) || ( xhr.status == 418 )) {
+    xhr.onload = function() {
+        if ((xhr.status != 401) && 
+            (xhr.status != 403) && 
+            (xhr.status != 418) ) {
             action_disallowed("something went wrong when updating a comment")
         }
     }
@@ -33,8 +35,10 @@ async function post_comment(message_) {
     xhr.open("POST", url, true);
     xhr.withCredentials = true;
     xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onload = () => {
-        if (( xhr.status == 403 ) || ( xhr.status == 418 )) {
+    xhr.onload = function() {
+        if ((xhr.status != 401) && 
+            (xhr.status != 403) && 
+            (xhr.status != 418) ) {
             action_disallowed("something went wrong when adding a new comment")
         }
     }
@@ -52,9 +56,13 @@ async function post_register(name_, password_) {
     var url = "http://localhost:4321/api/register";
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onload = () => {
-        if ((xhr.status != 403) || (xhr.status != 418)) {
-
+    xhr.onload = function() {
+        console.log(xhr.statusText)
+        if ((xhr.status != 401) && 
+            (xhr.status != 403) && 
+            (xhr.status != 418) ) {
+            
+            
             set_cookie(name_, password_)
 
             return 0;
@@ -78,9 +86,11 @@ async function post_login(name_, password_) {
     var url = "http://localhost:4321/api/login";
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onload = () => {
-        if ((xhr.status != 401) || (xhr.status != 403)) {
-
+    xhr.onload = function() {
+        if ((xhr.status != 401) && 
+            (xhr.status != 403) && 
+            (xhr.status != 418) ) {
+        
             set_cookie(name_, password_)
 
             return 0;
@@ -105,8 +115,10 @@ function delete_comment(id) {
     xhr.open("POST", url, true);
     xhr.withCredentials = true;
     xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onload = () => {
-        if (( xhr.status == 403 ) || ( xhr.status == 418 )) {
+    xhr.onload = function() {
+        if ((xhr.status != 401) && 
+            (xhr.status != 403) && 
+            (xhr.status != 418) ) {
 
             action_disallowed("something went wrong when deleting a comment")
         }
@@ -125,7 +137,7 @@ function get_comments() {
 
     const xhr = new XMLHttpRequest();
     xhr.open('GET', 'http://localhost:4321/api/getall');
-    xhr.onload = () => {
+    xhr.onload = function() {
         if (xhr.status === 200) {
             const data = JSON.parse(xhr.responseText);
             for (let i = 0; i < data.length; i++) {

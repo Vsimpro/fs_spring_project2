@@ -180,9 +180,10 @@ app.post("/api/login", async function(request, response) {
     let user = data["username"];
     let passwd = data["password"]
 
-    let user_in_db = await DATABASE.fetch_users(user, passwd);
-    
-    if ((user_in_db.username == user && user_in_db.password == passwd)) {
+    // this should never return null but it does?
+    let saved_user = await DATABASE.fetch_users(user, passwd);
+      
+    if ((saved_user.username == user && saved_user.password == passwd)) {
         response.status(202).send("{'success' : true}")
         return 0
     }
