@@ -77,7 +77,7 @@ class Connection {
 
     async fetch_users(username_, password_) {
         if ((username_ == null) || (password_ == null)) {
-            return null
+            return {username : null, password : null}
         }
 
         var user = await User.findOne({

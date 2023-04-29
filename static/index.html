@@ -30,8 +30,8 @@
             
             <span class="auth_form">
 
-                <p> Username: <input name="username" placeholder="Username.." ></p>
-                <p> Password: <input name="password" placeholder="Password.." type="password"></p>
+                <p> Username: <input id="username" name="username" placeholder="Username.." ></p>
+                <p> Password: <input id="password" name="password" placeholder="Password.." type="password"></p>
                 <br>
                 <button id="submit_cred"> submit credentials </button>
                 <br>
@@ -39,8 +39,8 @@
 
             <span class="comment_form">
                 <br>
-                <p> You're logged in as: <span class="whoami"> </span> </p> 
-                <p> Username: <input name="comment" placeholder="New comment.." ></p>
+                <p> You're logged in as: <span id="whoami"> </span> </p> 
+                <p> Comment: <input id="comment" name="comment" placeholder="New comment.." ></p>
                 <br>
                 <button id="submit_comment"> add comment </button>
             </span>
@@ -282,8 +282,9 @@ p {
 </style>
 
 <script>
-var cookie = {
-    username : "Jack",
+// this sits here because I have a skill issue.
+var virtual_cookie = {
+    username : null,
     password : null,
 }
 
@@ -312,9 +313,15 @@ function create_card(id, username, message) {
     card.appendChild(owner)
     card.appendChild(content)
 
-    if (username == cookie.username) {
+    if (username == virtual_cookie.username) {
         card.appendChild(update)
         card.appendChild(delete_button)
+
+        delete_button.addEventListener("click", function () {
+            let comment_id = this.parentElement.id
+            delete_comment(comment_id)
+        });
+
     }
 
     document.getElementById("comment_list").appendChild(card)
@@ -375,13 +382,117 @@ function toggle_content(state_) {
     return 0;
 };
 
+function post_comment(message_) {
+    var xhr = new XMLHttpRequest();
+    var url = "http://localhost:4321/api/add";
+    xhr.open("POST", url, true);
+    xhr.withCredentials = true;
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onload = () => {
+        if (( xhr.status == 403 ) || ( xhr.status == 418 )) {
+            action_disallowed("something went wrong when adding a new comment")
+        }
+    }
+    
+    var data = JSON.stringify({
+        "message" : message_
+    });
+
+    xhr.send(data);
+}
+
+function post_register(name_, password_) {
+    var xhr = new XMLHttpRequest();
+    var url = "http://localhost:4321/api/register";
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onload = () => {
+        console.log(xhr.status)
+        if ((xhr.status != 403) || (xhr.status != 418)) {
+            document.cookie =  `username=${name_}`
+            document.cookie =  `password=${password_}`
+
+            virtual_cookie.username = name_
+            virtual_cookie.password = password_
+
+            document.getElementById("whoami").innerText = name_
+
+            return 0;
+        }
+
+        // TODO: Trigger Error in front;
+        action_disallowed("something went wrong when registering.")
+    }
+    
+    var data = JSON.stringify({
+        "username" : name_,
+        "password" : password_
+    });
+
+    xhr.send(data);
+}
+
+function post_login(name_, password_) {
+    var xhr = new XMLHttpRequest();
+    var url = "http://localhost:4321/api/login";
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onload = () => {
+        console.log(xhr.status)
+        if ((xhr.status != 403) || (xhr.status != 401)) {
+            document.cookie =  `username=${name_}`
+            document.cookie =  `password=${password_}`
+
+            virtual_cookie.username = name_
+            virtual_cookie.password = password_
+
+            document.getElementById("whoami").innerText = name_
+
+            return 0;
+        }
+
+        // TODO: Trigger Error in front;
+        action_disallowed("something went wrong when logging in.")
+    }
+    
+    var data = JSON.stringify({
+        "username" : name_,
+        "password" : password_
+    });
+
+    xhr.send(data);
+}
+
+function delete_comment(id) {
+    var xhr = new XMLHttpRequest();
+    var url = `http://localhost:4321/api/delete/${id}`;
+    xhr.open("POST", url, true);
+    xhr.withCredentials = true;
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onload = () => {
+        if (( xhr.status == 403 ) || ( xhr.status == 418 )) {
+            action_disallowed("something went wrong when deleting a comment")
+        }
+    }
+    
+    xhr.send();
+
+}
+
+function action_disallowed(reason) {
+    alert(reason)
+    toggle_content(1)
+}
+
 function get_comments() {
+    // Clear all the previous comments.
+    document.getElementById("comment_list").innerHTML = ""
+
     const xhr = new XMLHttpRequest();
     xhr.open('GET', 'http://localhost:4321/api/getall');
     xhr.onload = () => {
         if (xhr.status === 200) {
             const data = JSON.parse(xhr.responseText);
-            console.log(data);
             for (let i = 0; i < data.length; i++) {
                 create_card(
                     data[i]["id"], 
@@ -394,28 +505,64 @@ function get_comments() {
 }
 
 document.getElementById("register").addEventListener("click", function (){
-    console.log("Switch to register")
     toggle_content(2)
 });
 
 document.getElementById("submit_cred").addEventListener("click", function (){
+    let uname_input = document.getElementById("username").value;
+    let passwd_input = document.getElementById("password").value;
+
     if (state == 1) {
-        console.log("Logging in.")
+        toggle_content(3)
+        post_login(uname_input, passwd_input)
     }
 
     if (state == 2) {
-        console.log("Registration.")
+        toggle_content(3)
+        post_register(uname_input, passwd_input)
     }
 
-    toggle_content(3)
+    // Update content
+    get_comments()
 });
 
 document.getElementById("submit_comment").addEventListener("click", function (){
-    console.log("New comm")
+    let comment = document.getElementById("comment").value
+    post_comment(comment)
+    console.log("1")
+    // Update content
+    get_comments()
+    console.log("3")
 });
 
 window.onload = () => {
     get_comments()
     toggle_content(1)
+
+    let uname = null
+    let pword = null
+
+    let cookies = document.cookie.split(";");
+    if (cookies.length == 2) {
+        if (cookies[0].split("=")[0] == "password") {
+            pword = cookies[0].split("=")[1];
+            uname = cookies[1].split("=")[1];
+        }
+
+        if (cookies[0].split("=")[0] == "username") {
+            pword = cookies[1].split("=")[1];
+            uname = cookies[0].split("=")[1];
+        }
+    }
+
+    virtual_cookie.username = uname
+    virtual_cookie.password = pword
+
+    if ((virtual_cookie.username) && (virtual_cookie.password)) {
+        toggle_content(3)
+        post_login(virtual_cookie.username, virtual_cookie.password)
+    }
+
+    console.log(uname, pword, virtual_cookie)
 };
 </script>

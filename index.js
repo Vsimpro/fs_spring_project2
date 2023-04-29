@@ -201,7 +201,7 @@ app.post("/api/register", async function(request, response) {
     }
 
     let exists = await user_exists(data)
-    if (exists != null) {
+    if (exists) {
         console.log("[>] [api] User already exists.");
         response.status(401).send("{success : false}")
         return 1;
@@ -277,7 +277,6 @@ app.post("/api/update/:id", async function(request, response) {
 // /api/delete/:id delete a comment made earlier. POST
 app.post("/api/delete/:id", async function(request, response) {
     let id = request.params.id
-    let data = request.body
     let cookies = request.cookies;
 
     console.log(`[>] [api] POST '/api/delete/${id}'`);
