@@ -9,8 +9,8 @@
     <div class="window">
         <header>
             <div class="grid-container">
-                <div> <a><h1 class="active"> home </h1></a></div>
-                <div> <a href="/auth.html"><h1 class="pseudo_link"> log in </h1></a></div>
+                <div> <a href="/"><h1 class="pseudo_link"> home </h1></a></div>
+                <div> <a><h1 class="active"> log in </h1></a></div>
                 <div> <a href="/new_comment.html"><h1 class="pseudo_link"> post a new comment </h1></a></div>
                 <div></div>
             </div>
@@ -38,7 +38,7 @@
             <div class="auth_form">
 
                 <p> Username: <input id="username" name="username" placeholder="Username.." ></p>
-                <p> Password: <input id="password" name="password" placeholder="Password.." type="password"></p>
+                <p> Password: <input id="password" name="password" placeholder="Password.." minlength="5" maxlength="256" type="password"></p>
                 <br>
                 <button id="submit_cred"> submit credentials </button>
                 <br>
@@ -77,6 +77,13 @@
         
         let username = document.getElementsByName("username")[0].value
         let password = document.getElementsByName("password")[0].value
+
+        // Clearing cookies. Prevents bugs.
+        let cookie_jar = document.cookie.split(";")
+        for (var cookie of cookie_jar) {
+            let chip = cookie.split("=");
+            document.cookie = chip[0].trim() + '=;expires=Fri, 20 Aug 2021 00:00:00 UTC'
+        }
         
         if ((username == "") || (password == "") ) {
             //alert("Fill in both boxes.")
@@ -94,7 +101,7 @@
         } 
 
         // Bit of a stupid way to do this, but alas:
-        document.body.style.cursor = 'wait'
+        document.body.style.cursor = "wait"
         console.log("Checking cookies, one second..")
         
         setTimeout(function() {
@@ -105,7 +112,8 @@
                 return 0;
             }
 
-            alert("Something went wrong.")
+            alert("Could not register desired username.")
+            document.body.style.cursor = "context-menu"
             return 1;
         }, 2500);
     })

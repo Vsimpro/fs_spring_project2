@@ -201,6 +201,11 @@ app.post("/api/register", async function(request, response) {
         return 1;
     }
 
+    if (!data["password"].length > 5) {
+        response.status(418).send("{'success' : false, 'reason' : 'password too short'}")
+        return 1;
+    }
+
     let exists = await user_exists(data)
     if (exists) {
         console.log("[>] [api] User already exists.");

@@ -10,9 +10,9 @@
     <div class="window">
         <header>
             <div class="grid-container">
-                <div> <a><h1 class="active"> home </h1></a></div>
+                <div> <a href="/"><h1 class="pseudo_link"> home </h1></a></div>
                 <div> <a href="/auth.html"><h1 class="pseudo_link"> log in </h1></a></div>
-                <div> <a href="/new_comment.html"><h1 class="pseudo_link"> post a new comment </h1></a></div>
+                <div> <a ><h1 class="active"> post a new comment </h1></a></div>
                 <div></div>
             </div>
         </header>
@@ -27,7 +27,7 @@
                 <p id="logged_in_as"> Post a comment here! You're logged in as: 
                     <strong><span id="name"></span></strong>
                 </p>
-                <p> Text: <input id="message" name="message" placeholder="Hello world.."></p>
+                <p> Text: <input id="message" name="message" placeholder="Hello world.." maxlength="255" minlength="5"></p>
                 <br>
                 <button id="submit_comm"> send comment </button>
                 <br>
@@ -61,10 +61,9 @@
 
     document.getElementById("name").innerText = cookies.username
 
-    submit
-        .addEventListener("click", function() {
-
+    submit.addEventListener("click", function() {
             let message = document.getElementsByName("message")[0].value
+
             post_comment(message)
             window.location.assign("/")
 

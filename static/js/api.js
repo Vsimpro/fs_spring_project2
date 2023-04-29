@@ -17,9 +17,9 @@ function update_comment(id, message) {
     xhr.withCredentials = true;
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.onload = function() {
-        if ((xhr.status != 401) && 
-            (xhr.status != 403) && 
-            (xhr.status != 418) ) {
+        if ((xhr.status == 401) || 
+            (xhr.status == 403) || 
+            (xhr.status == 418) ) {
             action_disallowed("something went wrong when updating a comment")
         }
     }
@@ -36,9 +36,9 @@ async function post_comment(message_) {
     xhr.withCredentials = true;
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.onload = function() {
-        if ((xhr.status != 401) && 
-            (xhr.status != 403) && 
-            (xhr.status != 418) ) {
+        if ((xhr.status == 401) || 
+            (xhr.status == 403) || 
+            (xhr.status == 418) ) {
             action_disallowed("something went wrong when adding a new comment")
         }
     }
@@ -116,9 +116,9 @@ function delete_comment(id) {
     xhr.withCredentials = true;
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.onload = function() {
-        if ((xhr.status != 401) && 
-            (xhr.status != 403) && 
-            (xhr.status != 418) ) {
+        if ((xhr.status == 401) || 
+            (xhr.status == 403) || 
+            (xhr.status == 418) ) {
 
             action_disallowed("something went wrong when deleting a comment")
         }

@@ -29,5 +29,6 @@ a, a:hover, a:active {
 
 .grid-container {
     display: grid;
+    text-align: center;
     grid-template-columns: auto auto auto auto;
   }
