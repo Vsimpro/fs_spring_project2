@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<head>
+    <meta charset="utf-8">
+    <script src="js/dom.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/cookies.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="window">
+        <header>
+            <div class="grid-container">
+                <div> <a><h1 class="active"> home </h1></a></div>
+                <div> <a href="/auth.html"><h1 class="pseudo_link"> log in </h1></a></div>
+                <div> <a href="/new_comment.html"><h1 class="pseudo_link"> post a new comment </h1></a></div>
+                <div></div>
+            </div>
+        </header>
+        
+        <div class="new_comment_window">
+            <span id="login_status" hidden>
+                You're not logged in! Log in here:
+                <a href="/auth.html"> log in. </a>
+            </span>
+
+            <div class="comment_form">
+                <p id="logged_in_as"> Post a comment here! You're logged in as: 
+                    <strong><span id="name"></span></strong>
+                </p>
+                <p> Text: <input id="message" name="message" placeholder="Hello world.."></p>
+                <br>
+                <button id="submit_comm"> send comment </button>
+                <br>
+            </div>
+        </div>
+    
+    </div>
+</body>
+<script>
+
+    let nudge = document.getElementById("logged_in_as");
+    let submit = document.getElementById("submit_comm");
+    let register_text = document.getElementById("login_status")
+    
+
+    let cookies = check_cookies()
+    if ((!cookies.username) || (!cookies.password)) {
+        nudge.hidden = true;
+        submit.disabled = true;
+        register_text.hidden = false;
+        
+        console.log(1)
+    } else {
+        console.log(2)
+        nudge.hidden = false;
+        submit.disabled = false;
+        register_text.hidden = true;
+    };
+
+
+
+    document.getElementById("name").innerText = cookies.username
+
+    submit
+        .addEventListener("click", function() {
+
+            let message = document.getElementsByName("message")[0].value
+            post_comment(message)
+            window.location.assign("/")
+
+    });
+
+</script>
+<style>
+    a:hover {
+        font-weight: bold;
+    }
+
+    body {
+        user-select: none;
+    }
+
+    .new_comment_window {
+        width: 50%;
+        margin: 0 auto;
+
+        padding-left: 5%;
+        padding-bottom: 2%;
+
+        border-radius: 8px;
+        border: 1px solid black;
+    }
+</style>

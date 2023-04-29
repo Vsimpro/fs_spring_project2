@@ -112,7 +112,15 @@ class Connection {
     // TODO: Insert desired data
     post(data) {
         try {
-            this.inserts = this.inserts + 1;
+            this.inserts = 0
+            if (this.data_pool.length > 0) {
+                this.data_pool.forEach(element => {
+                    if (element.id >= this.inserts) {
+                        this.inserts = element.id + 1
+                    }
+                });
+            }
+
             let new_comment = new Comment({
                 id : this.inserts,
                 username : data["username"],

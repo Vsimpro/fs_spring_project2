@@ -1,0 +1,33 @@
+:root {
+    /* Catppuccin Colour- scheme */    
+  --black-color:    #11111b;
+  --grey-color:     #9399b2;
+  --dark-grey-color:#45475a;
+  --bg-color:       #1e1e2e;
+  --text-color:     #cdd6f4;
+}
+
+* {
+    font-family: monospace;
+}
+
+h1 {
+    user-select: none;
+}
+
+a, a:hover, a:active {
+    color: black;
+}
+
+.active {
+    color: var(--dark-grey-color);
+}
+
+.pseudo_link:hover {
+    text-decoration: underline;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+  }

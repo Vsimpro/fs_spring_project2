@@ -1,0 +1,138 @@
+<!DOCTYPE HTML>
+<head>
+    <meta charset="utf-8">
+    <script src="js/api.js"></script>
+    <script src="js/cookies.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="window">
+        <header>
+            <div class="grid-container">
+                <div> <a><h1 class="active"> home </h1></a></div>
+                <div> <a href="/auth.html"><h1 class="pseudo_link"> log in </h1></a></div>
+                <div> <a href="/new_comment.html"><h1 class="pseudo_link"> post a new comment </h1></a></div>
+                <div></div>
+            </div>
+        </header>
+
+        <div class="authentication_window">
+            <span id="login_text">
+                <p> Log in to make a comment. </p> 
+                <p class="small"> ps. if you have no account, 
+                    <span class="pseudolink" id="register"><u>register</u></span> 
+                instead. </p>
+                <br>
+            </span>
+
+            <!-- Register text -->
+            <span id="register_text" hidden>
+                <p> Register a new account. </p> 
+                <p> we will only store your username & password, <br>
+                    in addition to the comments you make. <br>
+                    By clicking "submit" you agree to this.
+                </p>
+                <br>
+            </span>
+
+            <div class="auth_form">
+
+                <p> Username: <input id="username" name="username" placeholder="Username.." ></p>
+                <p> Password: <input id="password" name="password" placeholder="Password.." type="password"></p>
+                <br>
+                <button id="submit_cred"> submit credentials </button>
+                <br>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script>
+
+    // 0 for login, 1 for registering.
+    var mode = 0
+
+    document.getElementById( "register" )
+        .addEventListener( "click", function () {
+            let login_text = document.getElementById("login_text")
+            let register_text = document.getElementById("register_text")
+
+            if ( !register_text.hidden ) {
+                mode = 0
+                login_text.hidden = false;
+                register_text.hidden = true;
+                
+                return 0;
+            }
+
+            mode = 1
+            login_text.hidden = true;
+            register_text.hidden = false;
+
+            return 0;
+
+    });
+
+    document.getElementById("submit_cred").addEventListener("click", async function() {
+        
+        let username = document.getElementsByName("username")[0].value
+        let password = document.getElementsByName("password")[0].value
+        
+        if ((username == "") || (password == "") ) {
+            //alert("Fill in both boxes.")
+            return 1;
+        } 
+
+        switch (mode) {
+            case 0:
+                await post_login(username, password)
+                break
+            
+            case 1:
+                await post_register(username, password)
+                break
+        } 
+
+        // Bit of a stupid way to do this, but alas:
+        document.body.style.cursor = 'wait'
+        console.log("Checking cookies, one second..")
+        
+        setTimeout(function() {
+            let cookies = check_cookies() 
+            console.log(cookies)
+
+            if ( (cookies.username) && (cookies.username) ) {
+                window.location.assign("/")
+                return 0;
+            }
+
+            alert("Something went wrong.")
+            return 1;
+        }, 2500);
+    })
+
+</script>
+<style>
+    u:hover {
+        cursor: pointer;
+    }
+
+    header {
+        text-align: center;
+    }
+
+    .authentication_window {
+        width: 50%;
+        margin: 0 auto;
+
+        padding-left: 5%;
+        padding-bottom: 2%;
+
+        border-radius: 8px;
+        border: 1px solid black;
+    }
+
+    #login_text, #register_text {
+        user-select: none;
+    }
+</style>

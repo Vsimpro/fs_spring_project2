@@ -13,6 +13,7 @@ const app = express();
       app.use(cors( {origin: "*" }));
       app.use(express.json());
       app.use(cookieParser());
+      // I suppppppppppppose this is all we need for the frontend. 
       app.use(express.static(__dirname + "/static/"))
       
 
@@ -135,7 +136,7 @@ app.get("/api/getall", async function(request, response){
     } catch (error) {
         console.log("[!] Error")
         console.log(error)
-        response.send("{success : false, error : 500}")
+        response.send("{'success' : false, error : 500}")
         return 1
     }
     
@@ -165,7 +166,6 @@ app.get("/api/id/:id", async function(request, response){
     return 1;
 });
 
-// TODO: Register
 
 // /api/login 
 app.post("/api/login", async function(request, response) {
@@ -173,7 +173,7 @@ app.post("/api/login", async function(request, response) {
     let data = request.body
 
     if ( (!data["username"]) || (!data["password"])) {
-        response.status(401).send("{success : false}")
+        response.status(401).send("{'success' : false}")
         return 1;
     }
 
@@ -183,11 +183,11 @@ app.post("/api/login", async function(request, response) {
     let user_in_db = await DATABASE.fetch_users(user, passwd);
     
     if ((user_in_db.username == user && user_in_db.password == passwd)) {
-        response.status(202).send("{success : true}")
+        response.status(202).send("{'success' : true}")
         return 0
     }
 
-    response.status(401).send("{success : false}")
+    response.status(401).send("{'success' : false}")
     return 1;
 });
 
@@ -196,14 +196,14 @@ app.post("/api/register", async function(request, response) {
     let data = request.body
     
     if ( (!data["username"]) || (!data["password"])) {
-        response.status(418).send("{success : false}")
+        response.status(418).send("{'success' : false}")
         return 1;
     }
 
     let exists = await user_exists(data)
     if (exists) {
         console.log("[>] [api] User already exists.");
-        response.status(401).send("{success : false}")
+        response.status(401).send("{'success' : false}")
         return 1;
     }
 
@@ -212,11 +212,11 @@ app.post("/api/register", async function(request, response) {
     let created = await find_user(data)
     if (!created) {
         console.log("[>] [api] problem creating a new user..");
-        response.status(418).send("{success : false}")
+        response.status(418).send("{'success' : false}")
         return 1;
     }
     
-    response.status(201).send("{success : true}")
+    response.status(201).send("{'success' : true}")
     return 1;
 });
 
@@ -227,10 +227,10 @@ app.post("/api/add/", function(request, response) {
     let cookies = request.cookies;
 
     console.log("[>] [api] POST '/api/add/'");
-    if ((data["message"].length > 250) || 
+    if ((data["message"].length > 255) || 
         (data["message"] == undefined) || 
         (data["message"] == "")) {
-            response.status(418).send("{success : false, error : \"no content\"}")
+            response.status(418).send("{'success' : false, 'error' : 'wrongly sized comment'}")
             return 1;
         }
 
@@ -241,11 +241,11 @@ app.post("/api/add/", function(request, response) {
             "message"  : data["message"],
         });
 
-        response.status(201).send("{success : true}")
+        response.status(201).send("{'success' : true}")
         return 0;
     }
        
-    response.status(401).send("{success : false}")
+    response.status(401).send("{'success' : false}")
     return 1;
 });
 
@@ -259,18 +259,23 @@ app.post("/api/update/:id", async function(request, response) {
 
     let owner = await is_owner(cookies, id)
     if (!owner) {
-        response.status(401).send("{success : false}")
+        response.status(401).send("{'success' : false}")
+        return 1;
+    }
+
+    if ( (data.length < 0) || (data.length > 255) ) {
+        response.status(418).send("{'success' : false, 'reason' : 'message size not ok'}")
         return 1;
     }
 
     let status = await modify_content(data, id)
     if (!status) {
-        response.status(401).send("{success : false}")
+        response.status(401).send("{'success' : false}")
         return 1;
     }
 
     console.log(`[>] [api] Updated '${id}'`);
-    response.status(202).send("{success : true}")
+    response.status(202).send("{'success' : true}")
     return 0;
 });
 
@@ -283,18 +288,18 @@ app.post("/api/delete/:id", async function(request, response) {
 
     let owner = await is_owner(cookies, id)
     if (!owner) {
-        response.status(401).send("{success : false}")
+        response.status(401).send("{'success' : false}")
         return 1;
     }
 
     let status = await delete_comment(id)
     if (!status) {
-        response.status(401).send("{success : false}")
+        response.status(401).send("{'success' : false}")
         return 1;
     }
     
     console.log(`[>] [api] Deleted id : '${id}'`);
-    response.status(202).send("{success : true}")
+    response.status(202).send("{'success' : true}")
     return 0;
 });
 

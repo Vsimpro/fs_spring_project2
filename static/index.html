@@ -1,52 +1,21 @@
 <!DOCTYPE HTML>
 <head>
     <meta charset="utf-8">
+    <script src="js/dom.js"></script>
+    <script src="js/api.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <div class="window">
         <header>
-            <h1> New Collection </h1>
-            
+            <div class="grid-container">
+                <div> <a><h1 class="active"> home </h1></a></div>
+                <div> <a href="/auth.html"><h1 class="pseudo_link"> log in </h1></a></div>
+                <div> <a href="/new_comment.html"><h1 class="pseudo_link"> post a new comment </h1></a></div>
+                <div></div>
+            </div>
         </header>
         
-        <div class="form">
-            <h2> Authentication: </h2>
-            <!-- Login text -->
-            <span class="login_text">
-                <p> Log in to make a comment. </p> 
-                <p class="small"> ps. if you have no account, 
-                    <span class="pseudolink" id="register">register</span> 
-                instead. </p>
-                <br>
-            </span>
-
-            <!-- Register text -->
-            <span class="register_text">
-                <p> Register a new account. </p> 
-                <p> we will only store your username & password, <br>
-                    in addition to the comments you make </p>
-                <br>
-            </span>
-            
-            <span class="auth_form">
-
-                <p> Username: <input id="username" name="username" placeholder="Username.." ></p>
-                <p> Password: <input id="password" name="password" placeholder="Password.." type="password"></p>
-                <br>
-                <button id="submit_cred"> submit credentials </button>
-                <br>
-            </span>
-
-            <span class="comment_form">
-                <br>
-                <p> You're logged in as: <span id="whoami"> </span> </p> 
-                <p> Comment: <input id="comment" name="comment" placeholder="New comment.." ></p>
-                <br>
-                <button id="submit_comment"> add comment </button>
-            </span>
-                    
-        </div>
-        <br>
         <div class="canvas">
             <h2 class="title"> Comments: </h2>
             <div id="comment_list">
@@ -55,232 +24,43 @@
         </div>
     </div>
 </body>
-
-<!-- Single page design.-->
 <style>
-
-:root {
-    /* Catppuccin Colour- scheme */    
-  --black-color:    #11111b;
-  --grey-color:     #9399b2;
-  --dark-grey-color:#45475a;
-  --bg-color:       #1e1e2e;
-  --text-color:     #cdd6f4;
-  --rose-color:     #f5e0dc;
-  --mauve-color:    #cba6f7;
-  --red-color:      #f38ba8;
-  --peach-color:    #fab387;
-  --yellow-color:   #f9e2af;
-  --green-color:    #a6e3a1;
-  --sky-color:      #89dceb;
-  --blue-color:     #89b4fa;
-  --lavender-color: #b4befe;
-
-  /* Box Sizes. */    
-
-  --title-width: 983px;
-
-  --window-heigth: 800px;
-  --window-width:  1000px;
-  
-  --form-heigth: 377px
-  --form-width:  983px;
-
-  --comments-height: 8000px;
-  --comments-width:  983px;
-
-  --button-width: 145px;
-
-  --card-width: 290px;
-  --card-heigth: auto;
-}
-
-* {
-    user-select: none;
-}
-
-body {
-    overflow: hidden;
-    text-align: center;
-
-    font-family: monospace;
-
-    background-color: var(--bg-color);
-}
-
-h1 {
-    margin:  0;
-    padding: 0;
-
-    padding-left:  5%;
-    padding-right: -5%;
-
-    text-shadow: 4px 0px 4px var(--text-color);
-}
-
-h2 {
-    text-shadow: 1px 0px 6px var(--rose-color);
-}
-
-header {
-    width:  var(--title-width);
-    height: 30px;
-
-
-    text-align: left;
-
-    border-bottom: 4px solid var(--grey-color);
-
-    background-color: var(--peach-color);
-}
-
-p {
-    margin:  0;
-    padding: 0;
-    
-}
-
-
-.canvas {
-    user-select: all;
-
-    font-size: large;
-
-    margin: 0;
-
-    color: var(--bg-color);
-
-    width:  var(--comments-width);
-    height: auto;
-}
-
-.card {
-    float: left;
-
-    width: var(--card-width);
-    height: var(--card-heigth);
-
-    text-align: left;    
-
-    margin: 0;
-    padding: 0;
-
-    margin: 1%;
-
-    border-top:   1px solid var(--black-color);
-    border-right: 1px solid var(--black-color);
-
-    box-shadow: 3px 3px 1px var(--black-color);
-
-    background-color: var(--text-color);
-}
-
-.form {
-    height: var(--form-width);
-    height: var(--form-heigth);
-
-    font-size: large;
-}
-
-.pseudolink {
-    text-decoration: underline;
-    font-weight: bolder;
-}
-
-.pseudolink:hover {
-    color: var(--sky-color);
-    background-color: var(--bg-color);
-
-}
-
-.title, .form {
-    margin: 0;
-
-    text-align: left;
-
-    padding-left: 5%;
-}
-
-.update, .delete_bttn {
-    width: var(--button-width);
-}
-
-.username {
-    position: relative;
-    font-style: italic;
-    font-size: xx-large;
-    font-weight: bolder;
-    
-
-    margin: 0;
-    margin-bottom: 2%;
-
-    padding: 0;
-    padding-left: 4%;
-    padding-bottom: 2%;
-
-    border-left: 1px solid var(--bg-color);
-    border-bottom: 1px solid var(--bg-color);    
+.delete_bttn, .update {
+    width: 50%;
 }
 
 .message {
-    text-align: left;
+    margin: 0 auto;
+    margin-top: 3%;
+    margin-left: 5%;
+    margin-right: 5%;
 
+}
+
+.username {
     margin: 0;
-    padding: 2%;
-
-    border-left: 1px solid var(--black-color);
-
-    border-bottom: 1px solid var(--black-color);
+    margin-top: 3%;
+    font-weight: bold;
+    text-align: center;
+    border-bottom: 1px solid var(--bg-color);
 }
 
-.window {
-    overflow-y: scroll;
-    position: relative;
+.card {
+    width: 30%;
+    float: left;
+    height: 280px;
+    user-select: none;
 
-    width:  var(--window-width);
-    height: var(--window-heigth);
+    margin-right: 1%;
 
-    margin: 0;
-    margin-top: 33px;
+    box-shadow: 0px 6px 12px var(--text-color);
+
+    border-radius: 4px;
+
+    border: 1px solid var(--bg-color);
     
-    display: inline-block;
-
-    color:            var(--black-color);
-
-    background-color: var(--rose-color);
-
-    box-shadow: 15px 15px 0px var(--black-color);
-    
-    transform: rotate(0deg);
-    
-    /*
-    animation-name: rotate;
-    animation-duration: 1s;
-    animation-timing-function: ease-in-out;*/
-
-    border:  4px solid var(--grey-color);
-    border-bottom: 4px solid var(--dark-grey-color);
-    border-right:  4px solid var(--dark-grey-color);
 }
-
-@keyframes rotate{
-  from {
-    top:        var(--window-heigth);
-    margin-top: var(--window-heigth);
-    box-shadow: 0px 0px 0px var(--bg-color);
-    transform: rotate(-90deg); /* Specify the initial transformation */
-  }
-  to {
-    top: 0px;
-    margin-top: 33px;
-    box-shadow: 12px 12px 0px var(--black-color);
-    transform: scale(0deg); /* Specify the final transformation */
-  }
-}
-
 </style>
-
 <script>
 // this sits here because I have a skill issue.
 var virtual_cookie = {
@@ -288,257 +68,8 @@ var virtual_cookie = {
     password : null,
 }
 
-function create_card(id, username, message) {
-    let owner = document.createElement("p");
-    let card  = document.createElement("div");
-    let content = document.createElement("p");
-    let update  = document.createElement("button");
-    let delete_button  = document.createElement("button");
-
-    card.id = id
-    card.className = "card"
-
-    update.className = "update"
-    update.innerText = "update content"
-
-    delete_button.className = "delete_bttn"
-    delete_button.innerText = "delete"
-    
-    owner.innerText = username;
-    owner.className = "username"
-
-    content.innerText = message;
-    content.className = "message"
-    
-    card.appendChild(owner)
-    card.appendChild(content)
-
-    if (username == virtual_cookie.username) {
-        card.appendChild(update)
-        card.appendChild(delete_button)
-
-        delete_button.addEventListener("click", function () {
-            let comment_id = this.parentElement.id
-            delete_comment(comment_id)
-        });
-
-    }
-
-    document.getElementById("comment_list").appendChild(card)
-}
-
-var state = 1;
-var login_ = true
-var auth_= true
-var comment_ = false
-var register_ = false
-
-// states [ 1 : log in, 2 : register, 3 : comment ]
-function toggle_content(state_) {
-    state = state_
-
-    let auth_form = document.getElementsByClassName("auth_form")[0]
-    let login_text = document.getElementsByClassName("login_text")[0]
-    let comment_form = document.getElementsByClassName("comment_form")[0]
-    let register_text = document.getElementsByClassName("register_text")[0]
-    
-    switch (state_) {
-        case 1:
-            auth_ = true;
-            login_ = true;
-            comment_ = false;
-            register_ = false;
-            break;
-
-        case 2:
-            auth_ = true;
-            login_ = false;
-            comment_ = false;
-            register_ = true;
-            break;
-
-        case 3:
-            auth_ = false;
-            login_ = false;
-            comment_ = true;
-            register_ = false;
-            break;
-
-        default: // Same as 1.
-            auth_ = true;
-            login_ = true;
-            comment_ = true;
-            register_ = true;
-            break;
-    } 
-
-
-    // Show if true, hide if false. I know it's not pretty. Its intuitive.
-    auth_form.hidden = !auth_
-    login_text.hidden = !login_ 
-    comment_form.hidden = !comment_
-    register_text.hidden = !register_
-    
-    return 0;
-};
-
-function post_comment(message_) {
-    var xhr = new XMLHttpRequest();
-    var url = "http://localhost:4321/api/add";
-    xhr.open("POST", url, true);
-    xhr.withCredentials = true;
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onload = () => {
-        if (( xhr.status == 403 ) || ( xhr.status == 418 )) {
-            action_disallowed("something went wrong when adding a new comment")
-        }
-    }
-    
-    var data = JSON.stringify({
-        "message" : message_
-    });
-
-    xhr.send(data);
-}
-
-function post_register(name_, password_) {
-    var xhr = new XMLHttpRequest();
-    var url = "http://localhost:4321/api/register";
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onload = () => {
-        console.log(xhr.status)
-        if ((xhr.status != 403) || (xhr.status != 418)) {
-            document.cookie =  `username=${name_}`
-            document.cookie =  `password=${password_}`
-
-            virtual_cookie.username = name_
-            virtual_cookie.password = password_
-
-            document.getElementById("whoami").innerText = name_
-
-            return 0;
-        }
-
-        // TODO: Trigger Error in front;
-        action_disallowed("something went wrong when registering.")
-    }
-    
-    var data = JSON.stringify({
-        "username" : name_,
-        "password" : password_
-    });
-
-    xhr.send(data);
-}
-
-function post_login(name_, password_) {
-    var xhr = new XMLHttpRequest();
-    var url = "http://localhost:4321/api/login";
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onload = () => {
-        console.log(xhr.status)
-        if ((xhr.status != 403) || (xhr.status != 401)) {
-            document.cookie =  `username=${name_}`
-            document.cookie =  `password=${password_}`
-
-            virtual_cookie.username = name_
-            virtual_cookie.password = password_
-
-            document.getElementById("whoami").innerText = name_
-
-            return 0;
-        }
-
-        // TODO: Trigger Error in front;
-        action_disallowed("something went wrong when logging in.")
-    }
-    
-    var data = JSON.stringify({
-        "username" : name_,
-        "password" : password_
-    });
-
-    xhr.send(data);
-}
-
-function delete_comment(id) {
-    var xhr = new XMLHttpRequest();
-    var url = `http://localhost:4321/api/delete/${id}`;
-    xhr.open("POST", url, true);
-    xhr.withCredentials = true;
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onload = () => {
-        if (( xhr.status == 403 ) || ( xhr.status == 418 )) {
-            action_disallowed("something went wrong when deleting a comment")
-        }
-    }
-    
-    xhr.send();
-
-}
-
-function action_disallowed(reason) {
-    alert(reason)
-    toggle_content(1)
-}
-
-function get_comments() {
-    // Clear all the previous comments.
-    document.getElementById("comment_list").innerHTML = ""
-
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', 'http://localhost:4321/api/getall');
-    xhr.onload = () => {
-        if (xhr.status === 200) {
-            const data = JSON.parse(xhr.responseText);
-            for (let i = 0; i < data.length; i++) {
-                create_card(
-                    data[i]["id"], 
-                    data[i]["username"], 
-                    data[i]["message"]);
-            };
-        };
-    }
-    xhr.send();
-}
-
-document.getElementById("register").addEventListener("click", function (){
-    toggle_content(2)
-});
-
-document.getElementById("submit_cred").addEventListener("click", function (){
-    let uname_input = document.getElementById("username").value;
-    let passwd_input = document.getElementById("password").value;
-
-    if (state == 1) {
-        toggle_content(3)
-        post_login(uname_input, passwd_input)
-    }
-
-    if (state == 2) {
-        toggle_content(3)
-        post_register(uname_input, passwd_input)
-    }
-
-    // Update content
-    get_comments()
-});
-
-document.getElementById("submit_comment").addEventListener("click", function (){
-    let comment = document.getElementById("comment").value
-    post_comment(comment)
-    console.log("1")
-    // Update content
-    get_comments()
-    console.log("3")
-});
 
 window.onload = () => {
-    get_comments()
-    toggle_content(1)
-
     let uname = null
     let pword = null
 
@@ -559,10 +90,11 @@ window.onload = () => {
     virtual_cookie.password = pword
 
     if ((virtual_cookie.username) && (virtual_cookie.password)) {
-        toggle_content(3)
         post_login(virtual_cookie.username, virtual_cookie.password)
     }
 
-    console.log(uname, pword, virtual_cookie)
+    
+    create_card("0", "Admin", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ut turpis vel nulla sagittis aliquam. Etiam rutrum vulputate diam, non iaculis urna. Quisque at venenatis libero. Integer venenatis a ante at fringilla. Mauris dapibus lectus in erat curae.")
+    get_comments()
 };
 </script>
