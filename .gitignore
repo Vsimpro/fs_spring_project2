@@ -12,7 +12,6 @@ tests.py
 node_modules/
 jspm_packages/
 package-lock.json
-package.json
 
 # Optional npm cache directory
 .npm
