@@ -12,7 +12,7 @@ function set_cookie(name_, password_) {
 
 function update_comment(id, message) {
     var xhr = new XMLHttpRequest();
-    var url = "https://" + window.location.hostname + `/api/delete/${id}`;
+    var url =  `/api/delete/${id}`;
     xhr.open("POST", url, true);
     xhr.withCredentials = true;
     xhr.setRequestHeader("Content-Type", "application/json");
@@ -31,7 +31,7 @@ function update_comment(id, message) {
 
 async function post_comment(message_) {
     var xhr = new XMLHttpRequest();
-    var url = "https://" + window.location.hostname + "/api/add";
+    var url =  "/api/add";
     xhr.open("POST", url, true);
     xhr.withCredentials = true;
     xhr.setRequestHeader("Content-Type", "application/json");
@@ -53,7 +53,7 @@ async function post_comment(message_) {
 
 async function post_register(name_, password_) {
     var xhr = new XMLHttpRequest();
-    var url = "https://" + window.location.hostname + "/api/register";
+    var url =  "/api/register";
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.onload = function() {
@@ -83,7 +83,7 @@ async function post_register(name_, password_) {
 
 async function post_login(name_, password_) {
     var xhr = new XMLHttpRequest();
-    var url = "https://" + window.location.hostname + "https://" + window.location.hostname + "/api/login";
+    var url =   "/api/login";
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.onload = function() {
@@ -111,7 +111,7 @@ async function post_login(name_, password_) {
 
 function delete_comment(id) {
     var xhr = new XMLHttpRequest();
-    var url = "https://" + window.location.hostname + `/api/delete/${id}`;
+    var url =  `/api/delete/${id}`;
     xhr.open("POST", url, true);
     xhr.withCredentials = true;
     xhr.setRequestHeader("Content-Type", "application/json");
